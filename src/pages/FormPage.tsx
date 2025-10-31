@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { useLocation } from "react-router-dom";
-import { MapPin, User, Mail, Phone, Send, AlertTriangle } from "lucide-react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { MapPin, User, Mail, Phone, Send, AlertTriangle, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -8,6 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { toast } from "sonner";
 
 const FormPage = () => {
+  const navigate = useNavigate();
   const location = useLocation();
   const locationData = location.state?.location || { latitude: 0, longitude: 0 };
   const isFallback = location.state?.isFallback || false;
@@ -109,7 +110,16 @@ const FormPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center p-4">
+    <div className="min-h-screen bg-background flex items-center justify-center p-4 relative">
+      <Button
+        variant="ghost"
+        size="sm"
+        onClick={() => navigate("/")}
+        className="absolute top-4 left-4"
+      >
+        <ArrowLeft className="mr-2 h-4 w-4" />
+        Back
+      </Button>
       <div className="w-full max-w-2xl space-y-6">
         {/* Location Display Card */}
         <Card className="border-border shadow-[var(--shadow-medium)]">
