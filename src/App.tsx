@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import LocationCapture from "./pages/LocationCapture";
 import FormPage from "./pages/FormPage";
 import NotFound from "./pages/NotFound";
+import ErrorBoundary from "./components/ErrorBoundary";
 
 const queryClient = new QueryClient();
 
@@ -16,7 +17,14 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<LocationCapture />} />
+          <Route
+            path="/"
+            element={
+              <ErrorBoundary>
+                <LocationCapture />
+              </ErrorBoundary>
+            }
+          />
           <Route path="/form" element={<FormPage />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />

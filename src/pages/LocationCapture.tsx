@@ -62,7 +62,7 @@ const LocationCapture = () => {
     setIsFallback(true);
     setLocation(FALLBACK_LOCATION);
     setIsLoading(false);
-    toast.error("Using fallback location (New Delhi, India)");
+    toast.error(`Location error: ${errorMessage}. Using fallback location (New Delhi, India).`);
     
     // Auto-redirect after 3 seconds even with fallback
     setTimeout(() => {
@@ -79,20 +79,26 @@ const LocationCapture = () => {
 
     // Try to get permission status
     if (navigator.permissions) {
-      navigator.permissions.query({ name: "geolocation" }).then((result) => {
-        if (result.state === "granted") {
+      try {
+        navigator.permissions.query({ name: "geolocation" }).then((result) => {
+          if (result.state === "granted") {
+            requestLocation();
+          } else if (result.state === "prompt") {
+            setShowPermissionModal(true);
+            setIsLoading(false);
+          } else {
+            setShowPermissionModal(true);
+            setIsLoading(false);
+          }
+        }).catch((e) => {
+          // If permissions API fails (e.g., security error), just try to get location
+          console.error("Permissions API error:", e);
           requestLocation();
-        } else if (result.state === "prompt") {
-          setShowPermissionModal(true);
-          setIsLoading(false);
-        } else {
-          setShowPermissionModal(true);
-          setIsLoading(false);
-        }
-      }).catch(() => {
-        // If permissions API fails, just try to get location
-        requestLocation();
-      });
+        });
+      } catch (e) {
+        console.error("Synchronous error querying permissions:", e);
+        requestLocation(); // Fallback to direct request if synchronous error occurs
+      }
     } else {
       // If permissions API not supported, just try to get location
       requestLocation();
@@ -144,7 +150,7 @@ const LocationCapture = () => {
                   <div className="bg-destructive/10 border border-destructive/20 rounded-lg p-4 mb-4">
                     <p className="text-sm text-destructive font-medium">Location Error</p>
                     <p className="text-sm text-muted-foreground mt-1">
-                      Using default location (New Delhi, India)
+                      {error} Using default location (New Delhi, India)
                     </p>
                   </div>
                 )}
